@@ -1,0 +1,15 @@
+General:
+  ConfigurationVersion: 2
+
+GRPCServerParameters:
+  Enabled: true
+  ListenAddr: 0.0.0.0:4317
+RefineryTelemetry:
+  AddRuleReasonToTrace: true
+StressRelief:
+  ActivationLevel: 85
+  DeactivationLevel: 50
+  Mode: monitor
+Traces:
+  SendDelay: 10s
+  TraceTimeout: 10s

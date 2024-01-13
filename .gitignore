@@ -1,0 +1,5 @@
+bin/
+obj/
+state/
+Pulumi.*.yaml
+node_modules/

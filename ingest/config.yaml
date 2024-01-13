@@ -1,0 +1,38 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+      grpc:
+
+processors:
+  batch:
+
+exporters:
+  kafka:
+    brokers:
+      - $EVENTHUB_ENDPOINT
+    protocol_version: 1.0.0
+    topic: "$EVENTHUB_NAME"
+    encoding: "otlp_proto"
+    partition_traces_by_id: true
+    metadata:
+      full: false
+    auth:
+      sasl:
+        mechanism: "PLAIN"
+        username: "$$ConnectionString"
+        password: "$EVENTHUB_SEND_CONNECTION_STRING"
+        version: 1
+      tls:
+        insecure: true
+
+extensions:
+  health_check:
+
+service:
+  extensions: [health_check]
+  pipelines:
+    traces/default:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [kafka]

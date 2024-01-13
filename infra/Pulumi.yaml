@@ -1,0 +1,3 @@
+name: infra
+runtime: dotnet
+description: Event hubs for Refinery load balancing

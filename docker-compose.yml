@@ -1,0 +1,56 @@
+services:
+  ingest-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    volumes:
+      - ./ingest/config.yaml:/etc/otelcol-contrib/config.yaml
+    ports:
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - EVENTHUB_ENDPOINT=${eventHubEndpoint}
+      - EVENTHUB_SEND_CONNECTION_STRING=${eventHubSendKey}
+      - EVENTHUB_NAME=${eventHubName}
+
+  processing-collector-1:
+    image: otel/opentelemetry-collector-contrib:latest
+    volumes:
+      - ./processing/config.yaml:/etc/otelcol-contrib/config.yaml
+    environment:
+      - CONSUMER_GROUP=consumer-group-1
+      - CLIENT_ID=processing-collector-1
+      - EVENTHUB_ENDPOINT=${eventHubEndpoint}
+      - EVENTHUB_LISTEN_CONNECTION_STRING=${eventHubListenKey}
+      - EVENTHUB_NAME=${eventHubName}
+      - REFINERY_ENDPOINT=refinery-1
+      - PROCESSOR_NAME=processing-collector-1
+      - HONEYCOMB_API_KEY=${HONEYCOMB_API_KEY}
+
+  refinery-1:
+    image: honeycombio/refinery:latest
+    volumes:
+      - ./refinery/config.yaml:/etc/refinery/refinery.yaml
+      - ./refinery/rules.yaml:/etc/refinery/rules.yaml
+    environment:
+      - REFINERY_HONEYCOMB_API_KEY=${REFINERY_HONEYCOMB_API_KEY}
+
+  processing-collector-2:
+    image: otel/opentelemetry-collector-contrib:latest
+    volumes:
+      - ./processing/config.yaml:/etc/otelcol-contrib/config.yaml
+    environment:
+      - CONSUMER_GROUP=consumer-group-2
+      - CLIENT_ID=processing-collector-2
+      - EVENTHUB_ENDPOINT=${eventHubEndpoint}
+      - EVENTHUB_LISTEN_CONNECTION_STRING=${eventHubListenKey}
+      - EVENTHUB_NAME=${eventHubName}
+      - REFINERY_ENDPOINT=refinery-2
+      - PROCESSOR_NAME=processing-collector-2
+      - HONEYCOMB_API_KEY=${HONEYCOMB_API_KEY}
+
+  refinery-2:
+    image: honeycombio/refinery:latest
+    volumes:
+      - ./refinery/config.yaml:/etc/refinery/refinery.yaml
+      - ./refinery/rules.yaml:/etc/refinery/rules.yaml
+    environment:
+      - REFINERY_HONEYCOMB_API_KEY=${REFINERY_HONEYCOMB_API_KEY}
